@@ -1,12 +1,21 @@
 inch=25.4;
 laser_bed_size = [29*inch,17*inch];
+alignment_pin_diameter = 0.25;
+size_xy = [5,3];
+feet_diameter = 0.55;
+coaster_diameter = 4;
+frame_outline = 0.75;
+coaster_spacing = 0.2;
 
-function get_alignment_pin_diameter() = 1/4*inch;
-
-function calc_plate_size(nx, ny, spacing) = let(outline=inch*3/2) [spacing*(nx)+outline, spacing*(ny)+outline];
+function get_coaster_diameter()=coaster_diameter*inch;
+function get_feet_diameter()=feet_diameter*inch;
+function get_number() = size_xy;
+function get_alignment_pin_diameter() = alignment_pin_diameter*inch;
+function get_laser_bed_size() = [laser_bed_size.x*inch, laser_bed_size.y*inch];
+function calc_plate_size(nx, ny, spacing) = let(outline=inch*frame_outline*2) [spacing*(nx)+outline, spacing*(ny)+outline];
 
 function get_alignment_hole(size) = [size.x/2-inch/2, size.y/2-inch/2];
-function get_curf() = 1/5*inch;
+function get_curf() = coaster_spacing*inch;
 
 module make_base_plate(size) {
     alignment_position = get_alignment_hole(size);
@@ -38,7 +47,7 @@ module make_foot_outline(d_outline, d_pad) {
     /*
     one at 0, 120, 240
     */
-    for (angle=[0,120,240]) {
+    for (angle=[45,135,225,315]) {
         x = sin(angle)*d_outline/2;
         y = cos(angle)*d_outline/2;
         translate([x, y])circle(d=d_pad);
@@ -59,10 +68,6 @@ module make_foot_plate(nx, ny, coaster_diameter, feet_diameter) {
     };
 }
 
-
-function get_coaster_diameter()=4*inch;
-function get_feet_diameter()=1/2*inch+1;
-function get_number() = [5,3];
 
 plate_size_ = calc_plate_size(get_number().x, get_number().y, get_curf()+get_coaster_diameter());
 echo(plate_size_.x/inch, plate_size_.y/inch);
